@@ -8,8 +8,8 @@ def setMatrix():
 			matrix[j][i]=i+1
 
 def readMatrix():
-	for i in range(matrix[::-1]):
-		matrix[10][i] = 0
+	for i in matrix[::-1][::1]:
+		matrix[10][10] = 100000000
 		print(matrix)		
 
 def main():
