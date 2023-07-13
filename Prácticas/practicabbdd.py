@@ -3,7 +3,7 @@ from tkinter import messagebox
 import sqlite3
 
 
-# ------------------------- FUUNCIONES --------------------------------------
+# ------------------------- FUNCIONES --------------------------------------
 def conexionBBDD():
 	miConexion = sqlite3.connect("Usuarios")
 	miCursor=miConexion.cursor()
@@ -26,6 +26,60 @@ def salirAplicacion():
 	if(valor=="yes"):
 		root.destroy()
 
+def limpiarCampos():
+	miNombre.set("")
+	miId.set("")
+	miApellido.set("")
+	miPass.set("")
+	miDireccion.set("")
+	textoComnetario.delete(1.0, END)
+
+def crear():
+	miConexion=sqlite3.connect("Usuarios")
+	miCursor=miConexion.cursor()
+
+	miCursor.execute("INSERT INTO DatosUsuarios VALUES(NULL, '" + miNombre.get() +
+		"','" + miPass.get() +
+		"','" + miApellido.get()+
+		"','" + miDireccion.get() +
+		"','" + textoComnetario.get("1.0", END) + "')")
+
+	miConexion.commit()
+	messagebox.showinfo("BBDD", "Registro insertado con éxito")
+
+def leer():
+	miConexion=sqlite3.connect("Usuarios")
+	miCursor=miConexion.cursor()
+
+	miCursor.execute("SELECT * FROM DatosUsuarios WHERE ID=" + miId.get())
+	
+	elUsuario=miCursor.fetchall()
+
+	for usuario in elUsuario:
+		miId.set(usuario[0])
+		miNombre.set(usuario[1])
+		miPass.set(usuario[2])
+		miApellido.set(usuario[3])
+		miDireccion.set(usuario[4])
+		textoComnetario.insert(1.0, usuario[5])
+
+	miConexion.commit()
+
+def actualizar():
+	miConexion=sqlite3.connect("Usuarios")
+	miCursor=miConexion.cursor()
+
+	miCursor.execute("UPDATE DatosUsuarios SET nombre_usuario='" + miNombre.get() +
+		"', password='" + miPass.get() + 
+		"', apellido='" + miApellido.get() + 
+		"', direccion='" + miDireccion.get() + 
+		"', comentarios='" + textoComnetario.get("1.0", END) + 
+		"' WHERE ID=" + miId.get())
+
+	miConexion.commit()
+	messagebox.showinfo("BBDD", "Registro actualizado con éxito")
+
+# ---------------------------- MAINWINDOW -------------------------------------------------
 
 root = Tk()
 root.title("Gestión BBDD")
@@ -39,12 +93,12 @@ bbddMenu.add_command(label="Conectar", command=conexionBBDD)
 bbddMenu.add_command(label="Salir", command=salirAplicacion)
 
 borrarMenu=Menu(barraMenu, tearoff=0)
-borrarMenu.add_command(label="Borrar campos")
+borrarMenu.add_command(label="Borrar campos", command=limpiarCampos)
 
 crudMenu=Menu(barraMenu, tearoff=0)
-crudMenu.add_command(label="Crea")
-crudMenu.add_command(label="Lee")
-crudMenu.add_command(label="Actualizar")
+crudMenu.add_command(label="Crea", command=crear)
+crudMenu.add_command(label="Lee", command=leer)
+crudMenu.add_command(label="Actualizar", command=actualizar)
 crudMenu.add_command(label="Borrar")
 
 ayudaMenu=Menu(barraMenu, tearoff=0)
@@ -61,21 +115,27 @@ barraMenu.add_cascade(label="Ayuda", menu=ayudaMenu)
 miFrame = Frame(root)
 miFrame.pack()
 
-cuadroID=Entry(miFrame)
+miId=StringVar()
+miNombre=StringVar()
+miApellido=StringVar()
+miPass=StringVar()
+miDireccion=StringVar()
+
+cuadroID=Entry(miFrame, textvariable=miId)
 cuadroID.grid(row=0, column=1, padx=10, pady=10)
 
-cuadroNombre=Entry(miFrame)
+cuadroNombre=Entry(miFrame, textvariable=miNombre)
 cuadroNombre.grid(row=1, column=1, padx=10, pady=10)
 cuadroNombre.config(fg="red", justify="right")
 
-cuadroPass=Entry(miFrame)
+cuadroPass=Entry(miFrame, textvariable=miPass)
 cuadroPass.grid(row=2, column=1, padx=10, pady=10)
 cuadroPass.config(show="?")
 
-cuadroApellido=Entry(miFrame)
+cuadroApellido=Entry(miFrame, textvariable=miApellido)
 cuadroApellido.grid(row=3, column=1, padx=10, pady=10)
 
-cuadroDireccion=Entry(miFrame)
+cuadroDireccion=Entry(miFrame, textvariable=miDireccion)
 cuadroDireccion.grid(row=4, column=1, padx=10, pady=10)
 
 textoComnetario=Text(miFrame, width=16, height=5)
@@ -110,13 +170,13 @@ comentariosLabel.grid(row=5, column=0, padx=10, pady=10, sticky="e")
 miFrame2=Frame(root)
 miFrame2.pack()
 
-botonCrear=Button(miFrame2, text="Create")
+botonCrear=Button(miFrame2, text="Create", command=crear)
 botonCrear.grid(row=0, column=0, padx=10, pady=10, sticky="e")
 
-botonLeer=Button(miFrame2, text=" Read ")
+botonLeer=Button(miFrame2, text=" Read ", command=leer)
 botonLeer.grid(row=0, column=1, padx=10, pady=10, sticky="e")
 
-botonActualizar=Button(miFrame2, text="Update")
+botonActualizar=Button(miFrame2, text="Update", command=actualizar)
 botonActualizar.grid(row=0, column=2, padx=10, pady=10, sticky="e")
 
 botonBorrar=Button(miFrame2, text="Delete")
