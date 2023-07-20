@@ -1,0 +1,20 @@
+https://www.youtube.com/watch?v=Vr9vl0qlggE&list=PLU8oAlHdN5BlvPxziopYZRd55pdqFwkeS&index=79
+
+#Ejecutar en consola:
+
+pip install pyinstaller
+
+#Ir al directorio dónde está el fichero a convertir en ejecutable en la consola
+# y ejecutar:
+
+pyinstaller nombrearchivo.py
+
+#o añadiendo el parametro para quue no salga la consola y se compile en un fichero
+
+pyinstaller --windowed --onefile nombrearchivo.py
+
+#Y para que añadsa el icono al ejecutable:
+
+pyinstaller --windowed --onefile --icon=./nombreicono.ico nombrearchivo.py
+
+pyinstaller --windowed --onefile --icon=./SkullICO.ico calculadora.py
